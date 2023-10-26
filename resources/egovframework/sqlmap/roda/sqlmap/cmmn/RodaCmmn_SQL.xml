@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Cmmn">
+	<select id="CmmnDao.selectInitValue" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT *
+		FROM rdit.tb_happns_welfr_cntr
+		
+	</select>
+	
+	
+	<select id="CmmnDao.selectTimeznList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT 
+			TIMEZN_CD, TIMEZN_CD || '시' AS TIMEZN_NM 
+		FROM RDIT.TB_FLOATING_POPULATION_0HOUR_FESTIVAL_ADCD 
+		GROUP BY TIMEZN_CD 
+		ORDER BY TIMEZN_CD 
+	</select>
+	
+	<select id="CmmnDao.selectHappnsWelfrCntrList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">	
+		select orgn_nm, addr, tel_number  from rdit.tb_happns_welfr_cntr order by tel_number 
+	</select>
+	
+	<select id="CmmnDao.selectAmdTotalValueList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">	
+		select 
+			admi_cd, 
+			adstrd_nm, 
+			(select distinct administzone_code from rdit.tn_wnty_adstrd_legaldong_list_231013 
+			where substring(adstrd_code, 0, 9) = A.admi_cd) as administzone_code,
+			sum(total) as total  
+		from rdit.tb_floating_population_0hour_festival_adcd A
+		where timezn_cd between #startTime# and #endTime#
+		group by admi_cd, adstrd_nm
+		order by admi_cd
+	</select>
+	
+</sqlMap>
